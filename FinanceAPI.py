@@ -1,14 +1,23 @@
 import datetime
-import pandas_datareader.data as web
+import os
+
 import pandas as pd
+import pandas_datareader.data as web
+
 
 class FinanceAPI:
 
     def __init__(self):
         self.file_name = 'data/finance_data.csv'
-        self.data = pd.read_csv((self.file_name), parse_dates=['Date'])
+        if os.path.isfile(self.file_name):
+            self.data = pd.read_csv((self.file_name), parse_dates=['Date'])
+        else:
+            self.data = None
 
     def get_data(self, start, end):
+        if self.data is None:
+            self.load_data(start, end)
+            return self.data
         if end.date() > self.data['Date'].max().date():
             self.load_data(self.data['Date'].max() + datetime.timedelta(days=1), end)
         return self.data[((self.data['Date'] >= start) & (self.data['Date'] <= end))]
@@ -23,8 +32,10 @@ class FinanceAPI:
         df = df.sort_values(by='Date')
         for col in df.columns:
             df[col] = df[col].ffill()
-
-        self.data = pd.concat([self.data, df], ignore_index=True)
+        if not self.data:
+            self.data = df
+        else:
+            self.data = pd.concat([self.data, df], ignore_index=True)
 
     def get_current(self):
         end = datetime.datetime.today()

@@ -1,4 +1,5 @@
 import datetime as dt
+import os
 import pandas as pd
 
 from pytrends.request import TrendReq
@@ -10,16 +11,24 @@ class GoogleTrendAPI:
         self.file_name = 'data/google_trend_data.csv'
         self.keyword = 'bitcoin'
         self.Date_format = '%Y-%m-%d'
-        self.data = pd.read_csv(self.file_name, parse_dates=['Date'])
+        if os.path.isfile(self.file_name):
+            self.data = pd.read_csv(self.file_name, parse_dates=['Date'])
+        else:
+            self.data = None
         self.pytrend = TrendReq()
 
     def get_data(self, start, end):
+        if self.data is None:
+            self.load_data(start, end)
+            return self.data
         if end > self.data['Date'].max():
             self.load_data(self.data['Date'].max(), end)
         return self.data[((self.data['Date'] >= start) & (self.data['Date'] <= end))]
 
     def load_data(self, start, end):
         while start < end - dt.timedelta(days=30):
+            if self.data is None:
+                self.data = self.get_py_trend(start, start + dt.timedelta(30))
             self.data = self.merge(self.data, self.get_py_trend(start, start + dt.timedelta(30)))
             start += dt.timedelta(30)
 

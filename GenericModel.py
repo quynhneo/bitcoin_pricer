@@ -13,21 +13,23 @@ class GenericModel:
     EXTRA_MODEL_ARGS = {}
 
     def __init__(self, finance_api=None, google_trend_api=None):
-        self.finance_api = finance_api if finance_api is not None else FinanceAPI()
+        """doc string here"""
+        self.finance_api = finance_api if finance_api is not None else FinanceAPI()   # initiate finance api if not
+        # already exist
         self.google_trend_api = google_trend_api if google_trend_api is not None else GoogleTrendAPI()
-        if os.path.isfile(self.MODEL_NAME):
+        if os.path.isfile(self.MODEL_NAME):  # Return True if 'MODEL_NAME' is an existing regular file
             self.model = joblib.load(self.MODEL_NAME)
         else:
-            self.model = (self.MODEL_CLASS)(**self.EXTRA_MODEL_ARGS)
+            self.model = (self.MODEL_CLASS)(**self.EXTRA_MODEL_ARGS)  # unpacking dictionary values as arguments
 
     def train(self, start, end):
         google_trend_df = self.google_trend_api.get_data(start, end)
         finance_df = self.finance_api.get_data(start, end)
         df = finance_df.merge(google_trend_df, on=['Date'])
         df = df.dropna()
-        X = df[['^GSPC', '^VIX', 'Volume', 'bitcoin']]
-        y = df['BTC-USD']
-        self.model.fit(X, y)
+        X = df[['^GSPC', '^VIX', 'Volume', 'bitcoin']]  # input
+        y = df['BTC-USD'] #
+        self.model.fit(X, y)  # fit the data to the model
 
     def predict(self, attributes):
         df = pd.DataFrame([attributes], columns=['^GSPC', '^VIX', 'Volume', 'bitcoin'])
