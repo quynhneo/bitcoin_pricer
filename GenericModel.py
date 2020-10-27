@@ -3,24 +3,28 @@ from datetime import datetime, timedelta
 # from sklearn.externals\
 import joblib
 import pandas as pd
+
 from GoogleTrendAPI import GoogleTrendAPI
 from FinanceAPI import FinanceAPI
 
 
 class GenericModel:
+    """GenericModel calls finance data and google trend TO GET DATA, and provides methods to train and make predictions"""
     MODEL_NAME = ''
     MODEL_CLASS = None
     EXTRA_MODEL_ARGS = {}
 
     def __init__(self, finance_api=None, google_trend_api=None):
-        """doc string here"""
+        """constructor
+        """
         self.finance_api = finance_api if finance_api is not None else FinanceAPI()   # initiate finance api if not
         # already exist
         self.google_trend_api = google_trend_api if google_trend_api is not None else GoogleTrendAPI()
         if os.path.isfile(self.MODEL_NAME):  # Return True if 'MODEL_NAME' is an existing regular file
-            self.model = joblib.load(self.MODEL_NAME)
-        else:
-            self.model = (self.MODEL_CLASS)(**self.EXTRA_MODEL_ARGS)  # unpacking dictionary values as arguments
+            self.model = joblib.load(self.MODEL_NAME) # econstruct a Python model object from a file persisted with joblib.dump.
+            print(self.MODEL_NAME,'file exists') # scafolding code
+        else: # call an instance of model class from scikit learn
+            self.model = self.MODEL_CLASS(**self.EXTRA_MODEL_ARGS)  # unpacking dictionary values as arguments
 
     def train(self, start, end):
         google_trend_df = self.google_trend_api.get_data(start, end)
@@ -44,5 +48,5 @@ class GenericModel:
         y = df['BTC-USD']
         return self.model.score(X, y)
 
-    def save(self):
+    def save(self): # save model object, to path given by MODEL_NAME
         joblib.dump(self.model, self.MODEL_NAME)
