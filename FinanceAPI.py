@@ -11,8 +11,10 @@ class FinanceAPI:
         self.file_name = 'data/finance_data.csv'
         if os.path.isfile(self.file_name):
             self.data = pd.read_csv((self.file_name), parse_dates=['Date'])
+            print(self.file_name, 'finance data file exists and is loaded')
         else:
             self.data = None
+            print(self.file_name, ": finance data file does not exist")  # scaffolding code
 
     def get_data(self, start, end):
         if self.data is None:

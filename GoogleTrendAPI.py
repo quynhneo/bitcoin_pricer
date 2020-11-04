@@ -17,11 +17,11 @@ class GoogleTrendAPI:
         self.Date_format = '%Y-%m-%d'
         #self.data
         if os.path.isfile(self.file_name): # if file exists
-            print(self.file_name, ": file exist")  # scaffolding code
+            print(self.file_name, ": Google trend data file exist and will be loaded")  # scaffolding code
             self.data = pd.read_csv(self.file_name, parse_dates=['Date']) # parsing column 'Date' as a date column
         else:
             self.data = None
-            print(self.file_name,": file does not exist") # scaffolding code
+            print(self.file_name,": Google trend data file does not exist") # scaffolding code
         self.pytrend = TrendReq() # connect to Google
 
     def get_data(self, start, end): # the only method that will be called from outside.
@@ -45,8 +45,6 @@ class GoogleTrendAPI:
 
         #x = self.data['bitcoin'][2] # test
         #quit()
-
-
         if start < end:
             self.data = self.merge(self.data, self.get_py_trend(start, end))
         self.close() # self is passed automatically.
@@ -69,7 +67,8 @@ class GoogleTrendAPI:
             return df1
         overlap = (set(df1['Date'].unique()) & set(df2['Date'].unique())).pop() # return the intersection of two sets of unique dates
         print('overlap',overlap)
-        quit()
+        #quit()
+        #raise('continue here')
         df1_val = df1[(df1['Date'] == overlap)][self.keyword].sum() #
         df2_val = df2[(df2['Date'] == overlap)][self.keyword].sum()
         df2[self.keyword] = df2[self.keyword] / df2_val * df1_val # normalize to df1 values because on overlap dates, the value must be equal
@@ -91,6 +90,5 @@ class GoogleTrendAPI:
         for col in self.data:
             if col.startswith('Unnamed'):
                 self.data.drop(columns=[col])
-
         self.data.to_csv(self.file_name, index=False) # save to csv file
 
