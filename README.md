@@ -8,3 +8,10 @@ pip install -r requirements.txt
 ```
 
 # Test 
+```
+python test.py
+```
+
+# Models available 
+* Linear Regression
+* Ridge Linear Regression
