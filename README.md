@@ -17,3 +17,6 @@ python test.py
 * RidgeRegression
 * SVMRegression 
 * LASSORegression
+
+# Acknowledgement
+Special thanks to Anh Le, software engineer at Google for help.
