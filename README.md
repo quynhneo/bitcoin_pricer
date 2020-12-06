@@ -13,5 +13,7 @@ python test.py
 ```
 
 # Models available 
-* Linear Regression
-* Ridge Linear Regression
+* LinearRegression
+* RidgeRegression
+* SVMRegression 
+* LASSORegression
