@@ -6,3 +6,4 @@ class LinearRegressionModel(GenericModel):
     """
     MODEL_NAME = 'model/LinearRegression.mdl'
     MODEL_CLASS = LinearRegression
+
