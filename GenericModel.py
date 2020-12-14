@@ -6,6 +6,7 @@ import pandas as pd
 
 from Data import Data
 
+
 class GenericModel:
     """Abstract class
     Class variables MODEL_NAME, MODEL_CLASS, EXTRA_MODEL_ARGS are to be overwritten by child class
@@ -34,7 +35,7 @@ class GenericModel:
         INPUT: model object, start date, end date
         OUTPUT: return None, fit the model to data
         """
-        X, y, _, _ = self.data.gather_data(start, end)
+        X, y = self.data.train_data(start, end)
         self.model.fit(X, y)  # fit the data to the model
 
     def predict(self, attributes):
@@ -50,7 +51,7 @@ class GenericModel:
         using data from recent dates as test data
         R = 1 means prediction = data (ideal case), R = 0 means prediction always = mean(true)"""
 
-        _, _, X, y = self.data.gather_data(start, end)  # get the test data
+        X, y = self.data.test_data(start, end)  # get the test data
         return self.model.score(X, y)
 
     def save(self):  # save model object to file, path given by MODEL_NAME
