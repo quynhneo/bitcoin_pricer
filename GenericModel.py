@@ -1,3 +1,4 @@
+# %load GenericModel.py
 import os
 from datetime import datetime, timedelta
 # from sklearn.externals\
@@ -7,7 +8,6 @@ import matplotlib.pyplot as plt
 
 from GoogleTrendAPI import GoogleTrendAPI
 from FinanceAPI import FinanceAPI
-
 
 class GenericModel:
     """Abstract class
@@ -39,38 +39,55 @@ class GenericModel:
         else:  # call an instance of model class (from scikit-learn)
             self.model = self.MODEL_CLASS(**self.EXTRA_MODEL_ARGS)  #
 
-    def train(self, start, end):
-        """ Train the model with data
-        INPUT: model object, start date, end date
-        OUTPUT: return None, fit the model to data
-        """
+
+    def gather_data(self,start,end):
+        """Gather the data from the Google and Yahoo APIs"""
         google_trend_df = self.google_trend_api.get_data(start, end)
         # shape (days,2), columns  = Date , bitcoin
         finance_df = self.finance_api.get_data(start, end)
         # shape (days,5), columns  = Date , ^GSPC , ^VIX, Volume , BTC-USD
         df = finance_df.merge(google_trend_df, on=['Date'])
         df = df.dropna()
+
         X = df[['^GSPC', '^VIX', 'Volume', 'bitcoin']]  # input
         y = df['BTC-USD'] #
+        return (X,y)
+
+
+    def train(self, start, end):
+        """ Train the model with data
+        INPUT: model object, start date, end date
+        OUTPUT: return None, fit the model to data
+        """
+        X,y=self.gather_data(start,end)
         self.model.fit(X, y)  # fit the data to the model
+
+
+    def plot_data(self,start,end):
+        """Plot the data"""
+        X,y=self.gather_data(start,end) # get the data
         # plotting
         f = plt.figure(figsize=(10, 10))
         ax = f.add_subplot(2,2,1)
-        ax.plot(df.index, df[['^GSPC']])
+        ax.plot(X.index, X[['^GSPC']],'o-')
         ax.set_xlabel('days since '+ str(start.year) + '-' + str(start.month) + '-' + str(start.day))
         ax.set_ylabel('GSPC')
         ax = f.add_subplot(2, 2, 2)
-        ax.plot(df.index, df[['^VIX']])
+        ax.plot(X.index, X[['^VIX']],'o-')
         ax.set_xlabel('days since '+ str(start.year) + '-' + str(start.month) + '-' + str(start.day))
         ax.set_ylabel('VIX')
         ax = f.add_subplot(2, 2, 3)
-        ax.plot(df.index, df[['Volume']])
+        ax.plot(X.index, X[['Volume']],'o-')
         ax.set_xlabel('days since '+ str(start.year) + '-' + str(start.month) + '-' + str(start.day))
         ax.set_ylabel('Volume')
         ax = f.add_subplot(2, 2, 4)
-        ax.plot(df.index, df[['bitcoin']])
+        ax.plot(X.index, X[['bitcoin']],'o-')
         ax.set_xlabel('days since '+ str(start.year) + '-' + str(start.month) + '-' + str(start.day))
         ax.set_ylabel('Google Trend for \'bitcoin\' ')
+
+        f2 =plt.figure(figsize=(5,5))
+        plt.plot(y.index,y,'o-')
+
 
     def predict(self, attributes):
         """Predict using the linear model
