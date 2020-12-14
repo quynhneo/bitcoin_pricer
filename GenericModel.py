@@ -41,7 +41,9 @@ class GenericModel:
             self.model = self.MODEL_CLASS(**self.EXTRA_MODEL_ARGS)  #
 
     def gather_data(self, start, end):
-        """Gather the data from the Google and Yahoo APIs"""
+        """Gather the data from the Google and Yahoo APIs
+        return tuple X_train,y_train,X_test,y_test) where train data is the first 2/3 of the data
+        """
         google_trend_df = self.google_trend_api.get_data(start, end)
         # shape (days,2), columns  = Date , bitcoin
         finance_df = self.finance_api.get_data(start, end)
@@ -67,7 +69,7 @@ class GenericModel:
         self.model.fit(X, y)  # fit the data to the model
 
     def plot_data(self, start, end):
-        """Plot the data"""
+        """Plot the train data"""
         X, y, _, _ = self.gather_data(start, end)  # get the train data
         # plotting
         f = plt.figure(figsize=(10, 10))
