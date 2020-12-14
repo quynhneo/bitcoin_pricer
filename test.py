@@ -6,11 +6,11 @@ from LassoRegressionModel import LassoRegressionModel
 
 
 def main():
-    # CHOOSE A MODEL
-    model = LinearRegressionModel()
-    # model = LassoRegressionModel()
-    print('started model')
-    model.train(dt.datetime.today() - dt.timedelta(days=90), dt.datetime.today())  # (start date, end date)
+    model = LinearRegressionModel() # Initiate a model
+    # choose the time range of data:
+    start_date, end_date = dt.datetime.today() - dt.timedelta(days=365), dt.datetime.today()
+    model.plot_data(start_date,end_date)
+    model.train(start_date, end_date)  # train the model on data
     print('finish training')
     model.save()
 
