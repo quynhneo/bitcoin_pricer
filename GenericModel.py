@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 import joblib
 import pandas as pd
 
-from Data import Data
 
+from Data import Data
 
 class GenericModel:
     """Abstract class
@@ -23,19 +23,18 @@ class GenericModel:
 
     def __init__(self):
         """Constructor: initiate model by loading or new instance """
-        self.data = Data()
+
         if os.path.isfile(self.MODEL_NAME):  # Return True if 'MODEL_NAME' is an existing regular file
             self.model = joblib.load(self.MODEL_NAME)  # load the model from file
             print(self.MODEL_NAME, 'model file exists and loaded')  # scaffolding code
         else:  # call an instance of model class (from scikit-learn)
             self.model = self.MODEL_CLASS(**self.EXTRA_MODEL_ARGS)  #
 
-    def train(self, start, end):
+    def train(self, X, y):
         """ Train the model with data
         INPUT: model object, start date, end date
         OUTPUT: return None, fit the model to data
         """
-        X, y = self.data.train_data(start, end)
         self.model.fit(X, y)  # fit the data to the model
 
     def predict(self, attributes):
@@ -46,12 +45,11 @@ class GenericModel:
         df = pd.DataFrame([attributes], columns=['^GSPC', '^VIX', 'Volume', 'bitcoin'])
         return self.model.predict(df)
 
-    def score(self, start, end):
+    def score(self, X, y):
         """Return the coefficient of determination R^2 of the prediction
         using data from recent dates as test data
         R = 1 means prediction = data (ideal case), R = 0 means prediction always = mean(true)"""
 
-        X, y = self.data.test_data(start, end)  # get the test data
         return self.model.score(X, y)
 
     def save(self):  # save model object to file, path given by MODEL_NAME

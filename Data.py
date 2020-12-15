@@ -14,7 +14,7 @@ class Data:
 
     def gather_data(self, start, end):
         """Gather the data from the Google and Yahoo APIs
-        return tuple X_train,y_train,X_test,y_test) where train data is the first 2/3 of the data
+        return a merged data frame
         """
         google_trend_df = self.google_trend_api.get_data(start, end)
         # shape (days,2), columns  = Date , bitcoin
@@ -25,6 +25,7 @@ class Data:
         return df
 
     def train_data(self, start, end):
+        """train data, first 2/3 of the data range"""
         df = self.gather_data(start, end)
         df_train = df[:int(df.shape[0] * 2 / 3)]
         X_train = df_train[['^GSPC', '^VIX', 'Volume', 'bitcoin']]  # input
@@ -33,6 +34,7 @@ class Data:
         return (X_train, y_train)
 
     def test_data(self, start, end):
+        """test data, last 1/3 of the data range"""
         df = self.gather_data(start, end)
         df_test = df[int(df.shape[0] * 2 / 3):]
         X_test = df_test[['^GSPC', '^VIX', 'Volume', 'bitcoin']]  # input
