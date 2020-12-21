@@ -17,7 +17,7 @@ model.train(X,y)  # train the model on data
 
 # # INPUT VALUES FOR ['^GSPC', '^VIX', 'Volume', 'bitcoin']
 xtest = [3319.47, 25.83, 22825594880, 65]
-print('Given ^GSPC = ', x[0], ', ^VIX = ', x[1], ',Volume = ', x[2], ',Google Trend bitcoin =', x[3])
+print('Given ^GSPC = ', xtest[0], ', ^VIX = ', xtest[1], ',Volume = ', xtest[2], ',Google Trend bitcoin =', xtest[3])
 print('Predicted price of Bitcoin:', model.predict(xtest))
 X_,y_ = data.test_data(start_date,end_date)
 print('R^2 score: ', model.score(X_,y_))
