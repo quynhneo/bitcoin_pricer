@@ -3,7 +3,7 @@ import datetime as dt
 # from pytrends.request import TrendReq
 from LinearRegressionModel import LinearRegressionModel
 from LassoRegressionModel import LassoRegressionModel
-
+from Data import Data
 
 model = LinearRegressionModel() # Initiate a model
 # choose the time range of data:

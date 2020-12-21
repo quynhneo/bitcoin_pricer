@@ -4,9 +4,6 @@ from datetime import datetime, timedelta
 import joblib
 import pandas as pd
 
-
-from Data import Data
-
 class GenericModel:
     """Abstract class
     Class variables MODEL_NAME, MODEL_CLASS, EXTRA_MODEL_ARGS are to be overwritten by child class
