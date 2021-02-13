@@ -1,5 +1,5 @@
 .DS_store
 .idea
 .ipynb_checkpoints
-__pycahe__
+__pycache__
 *.csv
